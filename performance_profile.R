@@ -1,11 +1,11 @@
 setwd("~/Documents/r")
-MODELS=c("model_A", "model_B", "model_KP", "DP")
+MODELS=c("model_A", "model_B", "model_KP")
 COLUMNS = c("instance", "n_jobs", "n_occurrences", "model", "status", "obj", "time")
 EPS = 0.00000000001
 
-cplex_results = read.csv("./results.csv", sep=";", header=FALSE, col.names=COLUMNS)
-dp_results = read.csv("./results_dp.csv", sep=";", header=FALSE, col.names=COLUMNS)
-results = rbind(cplex_results, dp_results)
+results = read.csv("./results.csv", sep=";", header=FALSE, col.names=COLUMNS)
+# dp_results = read.csv("./results_dp.csv", sep=";", header=FALSE, col.names=COLUMNS)
+#results = rbind(cplex_results, dp_results)
 
 # compute min costs
 min_costs = as.data.frame(aggregate(results$time~results$instance, FUN = min))
@@ -32,13 +32,14 @@ performance = function(s, t) {
 
 dev.off()
 par(mfcol=c(1, 1))
-i = 0
+i = 1
 color = c('red', 'blue', 'green', 'black')
 for (model in MODELS) {
   x = seq(min_r_sp,max_r_sp,(max_r_sp - min_r_sp)/10000)
   y = sapply(x, FUN = function (t) performance(model, t))
-  if (i == 0)  plot_function = plot
+  if (i == 1)  plot_function = plot
   else plot_function = lines
+  
   plot_function(x, y, col = color[i], type = "l", ylim = c(.7, 1), xlim = c(0, 2e+10))
   i = i + 1;
 }
